@@ -1,0 +1,9 @@
+{
+  "functions": {
+    "app/api/v1/convert/route.ts": { "maxDuration": 30, "memory": 1024 },
+    "app/api/v1/resize/route.ts": { "maxDuration": 30, "memory": 1024 },
+    "app/api/v1/compress/route.ts": { "maxDuration": 30, "memory": 1024 },
+    "app/api/v1/crop/route.ts": { "maxDuration": 30, "memory": 1024 },
+    "app/api/v1/watermark/route.ts": { "maxDuration": 30, "memory": 1024 }
+  }
+}
