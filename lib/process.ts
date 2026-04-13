@@ -93,12 +93,12 @@ export async function parseRequestBody(request: Request): Promise<ProcessImageOp
       }
 
       // Convert numeric fields
-      if (body.quality) body.quality = parseInt(body.quality)
-      if (body.width) body.width = parseInt(body.width)
-      if (body.height) body.height = parseInt(body.height)
-      if (body.x !== undefined) body.x = parseInt(body.x)
-      if (body.y !== undefined) body.y = parseInt(body.y)
-      if (body.opacity) body.opacity = parseInt(body.opacity)
+      if (body.quality) body.quality = parseInt(String(body.quality))
+      if (body.width) body.width = parseInt(String(body.width))
+      if (body.height) body.height = parseInt(String(body.height))
+      if (body.x !== undefined) body.x = parseInt(String(body.x))
+      if (body.y !== undefined) body.y = parseInt(String(body.y))
+      if (body.opacity) body.opacity = parseInt(String(body.opacity))
 
       // Convert boolean fields
       if (body.strip_metadata) body.strip_metadata = body.strip_metadata === 'true'
