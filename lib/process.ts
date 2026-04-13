@@ -101,8 +101,8 @@ export async function parseRequestBody(request: Request): Promise<ProcessImageOp
       if (body.opacity) body.opacity = parseInt(String(body.opacity))
 
       // Convert boolean fields
-      if (body.strip_metadata) body.strip_metadata = body.strip_metadata === 'true'
-      if (body.smart) body.smart = body.smart === 'true'
+      if (body.strip_metadata) body.strip_metadata = String(body.strip_metadata) === 'true'
+      if (body.smart) body.smart = String(body.smart) === 'true'
 
       return body
     } else {
