@@ -271,7 +271,7 @@ Sharp with its libvips dependency adds ~20MB. Configure vercel.json:
 ```
 UPSTASH_REDIS_REST_URL=https://your-redis.upstash.io
 UPSTASH_REDIS_REST_TOKEN=your_token_here
-API_KEYS={"ek_live_demo123":{"tier":"free","name":"Demo Key"}}
+API_KEYS={"ek_live_74qlNSbK5jTwq28Y":{"tier":"free","name":"Demo Key"}}
 NEXT_PUBLIC_SITE_URL=https://convert.endpnt.dev
 ```
 

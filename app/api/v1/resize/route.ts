@@ -20,6 +20,16 @@ export async function POST(request: NextRequest) {
   try {
     // Check API key
     const apiKey = getApiKeyFromHeaders(request.headers)
+
+    if (!apiKey) {
+      return errorResponse(
+        'AUTH_REQUIRED',
+        getErrorMessage('AUTH_REQUIRED'),
+        401,
+        { request_id: requestId }
+      )
+    }
+
     const keyInfo = validateApiKey(apiKey)
 
     if (!keyInfo) {

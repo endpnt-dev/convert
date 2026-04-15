@@ -104,7 +104,7 @@ export default function ApiTester({ endpoint, title, description, params }: ApiT
       const apiResponse = await fetch(`/api/v1${endpoint}`, {
         method: 'POST',
         headers: {
-          'x-api-key': 'ek_live_demo123', // Demo API key
+          'x-api-key': 'ek_live_74qlNSbK5jTwq28Y', // Demo API key
         },
         body: formData,
       })

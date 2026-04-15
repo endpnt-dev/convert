@@ -69,7 +69,7 @@ export default function ImageDemo() {
       const response = await fetch('/api/v1/convert', {
         method: 'POST',
         headers: {
-          'x-api-key': 'ek_live_demo123', // Demo API key
+          'x-api-key': 'ek_live_74qlNSbK5jTwq28Y', // Demo API key
         },
         body: formData,
       })
