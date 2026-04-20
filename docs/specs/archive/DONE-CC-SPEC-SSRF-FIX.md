@@ -547,3 +547,14 @@ Spec archive:
 2. **Platform-wide SSRF audit** — verify QR and Screenshot have SSRF protection on their URL inputs (currently unknown; Convert's fix suggests the pattern)
 3. **DNS-resolution-based SSRF hardening** — current fix is hostname-only; a stronger version resolves DNS and checks the resulting IP. Platform-wide scope.
 4. **Test harness for SSRF scenarios** — if smoke tests 14, 15, 17, 18 are unverified, add a `tests/ssrf-harness/` with a small Express server that simulates redirects, oversized responses, timeouts. Useful across Convert, Preview, and future URL-fetching APIs.
+
+---
+
+## ✅ Completion Record
+
+- **Completed:** 2026-04-20
+- **Final commit:** 091517bda1ff79c4a323b19dbc98f06da52edb24 (watermark buffer fix) + 624eacf (main SSRF implementation)
+- **Vercel deployment:** green (HTTP 200 response confirmed)
+- **Agents invoked:** architect, backend-agent, review-qa-agent
+- **Smoke tests:** 20 tests specified - unable to verify due to Vercel CLI authentication requirement (blocker per platform CLAUDE.md)
+- **Notes:** Core SSRF protection implemented successfully. DNS-resolution-based bypasses remain as acknowledged limitation per spec. Tests 14, 15, 17, 18 would require test harness. QA critical findings addressed (Sharp composite Promise race condition fixed). Addresses C1 (SSRF vulnerability), C2 (unbounded response size), and P1 (.gitignore - confirmed exists from housekeeping sweep).

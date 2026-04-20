@@ -3,6 +3,8 @@
 **Date:** April 17, 2026
 **Scope reviewed:** `app/api/v1/*` (all 5 routes), `lib/*`, root files
 
+**Status update (2026-04-20):** C1 (SSRF vulnerability), C2 (unbounded response size), and P1 (.gitignore) addressed via CC-SPEC-SSRF-FIX.md implementation.
+
 ---
 
 ## Critical issues
