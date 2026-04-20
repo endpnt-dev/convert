@@ -483,7 +483,7 @@ export async function addWatermark(
     } else if (watermarkUrl) {
       // Load watermark image
       const watermarkInput = await loadImageFromUrl(watermarkUrl)
-      const watermarkBuffer = sharp(watermarkInput.buffer)
+      const watermarkBuffer = await sharp(watermarkInput.buffer)
         .modulate({ lightness: 1, saturation: 1 })
         .png({ palette: true })
         .toBuffer()
@@ -500,7 +500,7 @@ export async function addWatermark(
       )
 
       pipeline = pipeline.composite([{
-        input: await watermarkBuffer,
+        input: watermarkBuffer,
         gravity,
         left,
         top,
