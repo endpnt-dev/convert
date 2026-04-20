@@ -51,6 +51,8 @@ export const ERROR_CODES = {
   FILE_TOO_LARGE: 'FILE_TOO_LARGE',
   UNSUPPORTED_FORMAT: 'UNSUPPORTED_FORMAT',
   IMAGE_FETCH_FAILED: 'IMAGE_FETCH_FAILED',
+  BLOCKED_IMAGE_URL: 'BLOCKED_IMAGE_URL',
+  TOO_MANY_REDIRECTS: 'TOO_MANY_REDIRECTS',
   PROCESSING_FAILED: 'PROCESSING_FAILED',
   INTERNAL_ERROR: 'INTERNAL_ERROR',
 } as const
@@ -59,5 +61,24 @@ export type InputFormat = typeof SUPPORTED_INPUT_FORMATS[number]
 export type OutputFormat = typeof SUPPORTED_OUTPUT_FORMATS[number]
 export type FitMode = typeof FIT_MODES[number]
 export type WatermarkPosition = typeof WATERMARK_POSITIONS[number]
+// SSRF protection - private IP ranges to block
+export const BLOCKED_IP_RANGES = [
+  '127.0.0.0/8',     // Loopback
+  '10.0.0.0/8',      // Private Class A
+  '172.16.0.0/12',   // Private Class B
+  '192.168.0.0/16',  // Private Class C
+  '169.254.0.0/16',  // Link-local
+  '224.0.0.0/4',     // Multicast
+  '240.0.0.0/4',     // Reserved
+  'fc00::/7',        // IPv6 Private
+  'fe80::/10',       // IPv6 Link-local
+  '::1/128',         // IPv6 Loopback
+]
+
+export const BLOCKED_DOMAINS = [
+  'localhost',
+  '0.0.0.0',
+]
+
 export type ApiTier = keyof typeof TIER_LIMITS
 export type ErrorCode = keyof typeof ERROR_CODES

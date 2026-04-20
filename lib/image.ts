@@ -1,6 +1,4 @@
 import sharp from 'sharp'
-import formidable from 'formidable'
-import { promises as fs } from 'fs'
 import {
   IMAGE_LIMITS,
   SUPPORTED_INPUT_FORMATS,
@@ -9,6 +7,7 @@ import {
   FitMode,
   WatermarkPosition
 } from './config'
+import { isSSRFProtected, resolveUrl } from './url-utils'
 
 export interface ImageInput {
   buffer: Buffer
@@ -68,44 +67,111 @@ export async function parseImageFromRequest(request: Request): Promise<ImageInpu
   }
 }
 
-// Load image from URL
+// Load image from URL with SSRF protection and streaming size check
 export async function loadImageFromUrl(url: string): Promise<ImageInput> {
-  try {
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'endpnt.dev Image Converter Bot 1.0'
+  const maxRedirects = 5
+  let currentUrl = url
+  let redirectCount = 0
+
+  while (redirectCount <= maxRedirects) {
+    // SSRF check BEFORE every fetch (including redirects)
+    if (!isSSRFProtected(currentUrl)) {
+      throw new Error('BLOCKED_IMAGE_URL')
+    }
+
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 10000) // 10s timeout per hop
+
+    try {
+      const response = await fetch(currentUrl, {
+        headers: {
+          'User-Agent': 'endpnt.dev Image Converter Bot 1.0'
+        },
+        redirect: 'manual', // Handle redirects manually
+        signal: controller.signal
+      })
+
+      clearTimeout(timeoutId)
+
+      // Handle redirects manually with re-validation
+      if (response.status >= 300 && response.status < 400) {
+        const location = response.headers.get('location')
+        if (!location) {
+          throw new Error('IMAGE_FETCH_FAILED')
+        }
+
+        // Resolve relative URLs
+        currentUrl = resolveUrl(location, currentUrl)
+        redirectCount++
+
+        if (redirectCount > maxRedirects) {
+          throw new Error('TOO_MANY_REDIRECTS')
+        }
+
+        continue // Re-validate and fetch the redirect URL
       }
-    })
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch image: ${response.status}`)
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.status}`)
+      }
+
+      // Stream-based size check
+      const reader = response.body?.getReader()
+      if (!reader) {
+        throw new Error('IMAGE_FETCH_FAILED')
+      }
+
+      const chunks: Uint8Array[] = []
+      let totalSize = 0
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read()
+
+          if (done) break
+
+          if (value) {
+            totalSize += value.length
+
+            // Early abort if size exceeded
+            if (totalSize > IMAGE_LIMITS.max_file_size_bytes) {
+              throw new Error('FILE_TOO_LARGE')
+            }
+
+            chunks.push(value)
+          }
+        }
+      } finally {
+        reader.cancel()
+      }
+
+      // Combine chunks into buffer
+      const buffer = Buffer.concat(chunks.map(chunk => Buffer.from(chunk)))
+
+      const contentType = response.headers.get('content-type') || ''
+      const format = detectImageFormatFromMime(contentType)
+
+      return {
+        buffer,
+        format,
+        size: buffer.length
+      }
+
+    } catch (error) {
+      clearTimeout(timeoutId)
+
+      if (error instanceof Error) {
+        if (['FILE_TOO_LARGE', 'BLOCKED_IMAGE_URL', 'TOO_MANY_REDIRECTS'].includes(error.message)) {
+          throw error
+        }
+      }
+
+      throw new Error('IMAGE_FETCH_FAILED')
     }
-
-    const contentLength = response.headers.get('content-length')
-    if (contentLength && parseInt(contentLength) > IMAGE_LIMITS.max_file_size_bytes) {
-      throw new Error('FILE_TOO_LARGE')
-    }
-
-    const buffer = Buffer.from(await response.arrayBuffer())
-
-    if (buffer.length > IMAGE_LIMITS.max_file_size_bytes) {
-      throw new Error('FILE_TOO_LARGE')
-    }
-
-    const contentType = response.headers.get('content-type') || ''
-    const format = detectImageFormatFromMime(contentType)
-
-    return {
-      buffer,
-      format,
-      size: buffer.length
-    }
-  } catch (error) {
-    if (error instanceof Error && error.message === 'FILE_TOO_LARGE') {
-      throw error
-    }
-    throw new Error('IMAGE_FETCH_FAILED')
   }
+
+  // This should never be reached due to the redirect loop above
+  throw new Error('TOO_MANY_REDIRECTS')
 }
 
 // Detect image format from filename and MIME type

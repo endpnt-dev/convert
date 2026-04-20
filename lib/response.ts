@@ -62,6 +62,8 @@ export function getErrorMessage(code: ErrorCode): string {
     FILE_TOO_LARGE: 'File is too large. Maximum size is 10MB.',
     UNSUPPORTED_FORMAT: 'Unsupported image format. Supported formats: JPEG, PNG, WebP, AVIF, TIFF, GIF, SVG.',
     IMAGE_FETCH_FAILED: 'Failed to fetch image from URL. Check the image URL.',
+    BLOCKED_IMAGE_URL: 'Image URL is blocked. Cannot access private networks or blocked domains.',
+    TOO_MANY_REDIRECTS: 'Too many redirects when fetching image URL.',
     PROCESSING_FAILED: 'Failed to process image. Please try again.',
     INTERNAL_ERROR: 'Internal server error. Please try again later.',
   }

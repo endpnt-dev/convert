@@ -436,6 +436,36 @@ Per platform CLAUDE.md archive rule:
 
 Run against the deployed `https://convert.endpnt.dev` after Vercel deploys green.
 
+### Setup: retrieve a valid API key from Vercel
+
+Per platform CLAUDE.md "API Keys for Smoke Tests" rule, do NOT use a hardcoded key. Before running the smoke tests below:
+
+```bash
+cd /mnt/c/Repositories/endpnt/convert
+vercel env pull --environment=production .env.runtime
+source .env.runtime
+DEMO_KEY=$(echo $API_KEYS | jq -r 'keys[0]')
+echo "Retrieved key, length: ${#DEMO_KEY}"
+```
+
+If `vercel` CLI is not installed or authenticated, STOP and report it as a blocker. One-time setup:
+```bash
+npm i -g vercel
+vercel login
+vercel link   # in this repo
+```
+
+If `jq` is not installed: `sudo apt-get install jq` (or equivalent). Without it, parse manually from the JSON.
+
+After the tests complete, remove the retrieved env file:
+```bash
+rm .env.runtime
+```
+
+### The tests
+
+Run against the deployed `https://convert.endpnt.dev` after Vercel deploys green.
+
 | # | Scenario | Command | Expected | Pass/Fail |
 |---|----------|---------|----------|-----------|
 | 1 | Legit public image URL still works | `curl -X POST https://convert.endpnt.dev/api/v1/convert -H "x-api-key: $DEMO_KEY" -H "Content-Type: application/json" -d '{"image_url":"https://images.unsplash.com/photo-1682687220742-aba13b6e50ba","output_format":"webp"}'` | HTTP 200, base64 webp image in response | |

@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
     if (error instanceof Error) {
       const errorCode = error.message as any
 
-      if (['INVALID_PARAMS', 'FILE_TOO_LARGE', 'UNSUPPORTED_FORMAT', 'IMAGE_FETCH_FAILED', 'PROCESSING_FAILED'].includes(errorCode)) {
+      if (['INVALID_PARAMS', 'FILE_TOO_LARGE', 'UNSUPPORTED_FORMAT', 'IMAGE_FETCH_FAILED', 'BLOCKED_IMAGE_URL', 'TOO_MANY_REDIRECTS', 'PROCESSING_FAILED'].includes(errorCode)) {
         return errorResponse(
           errorCode,
           getErrorMessage(errorCode),
