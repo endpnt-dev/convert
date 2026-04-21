@@ -169,7 +169,7 @@ export default function ApiTester({ endpoint, title, description, params }: ApiT
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
             className="w-full px-3 py-2 border border-border rounded-md bg-background"
-            placeholder="Enter your API key (ek_live_...)"
+            placeholder="Enter your API key"
           />
           <p className="text-xs text-muted-foreground">
             Your API key is required to test the endpoint. Get one at{' '}

@@ -59,9 +59,6 @@ export async function demoProxy(
   request: NextRequest,
   options: DemoProxyOptions
 ): Promise<NextResponse> {
-  // DEBUG PHASE 5b: remove after smoke tests pass
-  console.log('demoProxy called for convert API')
-
   const requestId = generateRequestId()
   const startTime = Date.now()
 
@@ -133,6 +130,9 @@ export async function demoProxy(
     // with its multipart boundary parameter, if present). Swap in the demo key for auth.
     const headers = new Headers()
     const originalContentType = request.headers.get('content-type')
+    // DEBUG PHASE 5b: remove after smoke tests pass
+    console.log('[DEMO-PROXY] Content-Type:', originalContentType)
+    // DEBUG PHASE 5b: remove after smoke tests pass
     if (originalContentType) {
       headers.set('content-type', originalContentType)
     } else {

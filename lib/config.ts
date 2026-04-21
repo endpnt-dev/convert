@@ -1,7 +1,7 @@
 export const API_VERSION = '1.0.0'
 
 export const DEMO_RATE_LIMIT = {
-  requests_per_window: 25,
+  requests_per_window: 20,
   window_minutes: 10
 } as const
 
