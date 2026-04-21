@@ -13,6 +13,9 @@ import {
 import { OutputFormat } from '@/lib/config'
 
 export async function POST(request: NextRequest) {
+  // DEBUG PHASE 5b: remove after smoke tests pass
+  console.log('v1/convert route called')
+
   const startTime = Date.now()
   const requestId = generateRequestId()
 

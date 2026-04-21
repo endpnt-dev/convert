@@ -24,6 +24,7 @@ export default function ApiTester({ endpoint, title, description, params }: ApiT
   const [paramValues, setParamValues] = useState<Record<string, any>>({})
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [imageUrl, setImageUrl] = useState('')
+  const [apiKey, setApiKey] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [response, setResponse] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
@@ -44,7 +45,7 @@ export default function ApiTester({ endpoint, title, description, params }: ApiT
 
   const generateCurlCommand = () => {
     let curl = `curl -X POST https://convert.endpnt.dev/api/v1${endpoint} \\\n`
-    curl += `  -H "x-api-key: YOUR_API_KEY" \\\n`
+    curl += `  -H "x-api-key: ${apiKey || 'YOUR_API_KEY'}" \\\n`
 
     if (selectedFile || imageUrl) {
       if (imageUrl) {
@@ -81,6 +82,11 @@ export default function ApiTester({ endpoint, title, description, params }: ApiT
       return
     }
 
+    if (!apiKey.trim()) {
+      setError('Please enter your API key')
+      return
+    }
+
     setIsLoading(true)
     setError(null)
     setResponse(null)
@@ -104,7 +110,7 @@ export default function ApiTester({ endpoint, title, description, params }: ApiT
       const apiResponse = await fetch(`/api/v1${endpoint}`, {
         method: 'POST',
         headers: {
-          'x-api-key': 'ek_live_74qlNSbK5jTwq28Y', // Demo API key
+          'x-api-key': apiKey,
         },
         body: formData,
       })
@@ -148,6 +154,30 @@ export default function ApiTester({ endpoint, title, description, params }: ApiT
       <div className="space-y-4">
         <h4 className="font-medium">Upload Test Image</h4>
         <ImageUploader onImageSelect={handleImageSelect} isLoading={isLoading} />
+      </div>
+
+      {/* API Key */}
+      <div className="space-y-4">
+        <h4 className="font-medium">Authentication</h4>
+        <div className="space-y-2">
+          <label className="text-sm font-medium flex items-center gap-2">
+            API Key
+            <span className="text-red-500 text-xs">*</span>
+          </label>
+          <input
+            type="password"
+            value={apiKey}
+            onChange={(e) => setApiKey(e.target.value)}
+            className="w-full px-3 py-2 border border-border rounded-md bg-background"
+            placeholder="Enter your API key (ek_live_...)"
+          />
+          <p className="text-xs text-muted-foreground">
+            Your API key is required to test the endpoint. Get one at{' '}
+            <a href="/pricing" className="text-primary-600 hover:underline">
+              /pricing
+            </a>
+          </p>
+        </div>
       </div>
 
       {/* Parameters */}
@@ -211,7 +241,7 @@ export default function ApiTester({ endpoint, title, description, params }: ApiT
       <div className="flex flex-col sm:flex-row gap-3">
         <button
           onClick={runTest}
-          disabled={isLoading || (!selectedFile && !imageUrl)}
+          disabled={isLoading || (!selectedFile && !imageUrl) || !apiKey.trim()}
           className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Play className="h-4 w-4" />

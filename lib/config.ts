@@ -1,5 +1,10 @@
 export const API_VERSION = '1.0.0'
 
+export const DEMO_RATE_LIMIT = {
+  requests_per_window: 25,
+  window_minutes: 10
+} as const
+
 export const TIER_LIMITS = {
   free: {
     requests_per_minute: 10,
@@ -55,6 +60,9 @@ export const ERROR_CODES = {
   TOO_MANY_REDIRECTS: 'TOO_MANY_REDIRECTS',
   PROCESSING_FAILED: 'PROCESSING_FAILED',
   INTERNAL_ERROR: 'INTERNAL_ERROR',
+  DEMO_UNAVAILABLE: 'DEMO_UNAVAILABLE',
+  ORIGIN_NOT_ALLOWED: 'ORIGIN_NOT_ALLOWED',
+  UNSUPPORTED_OPERATION: 'UNSUPPORTED_OPERATION',
 } as const
 
 export type InputFormat = typeof SUPPORTED_INPUT_FORMATS[number]

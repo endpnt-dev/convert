@@ -66,6 +66,9 @@ export function getErrorMessage(code: ErrorCode): string {
     TOO_MANY_REDIRECTS: 'Too many redirects when fetching image URL.',
     PROCESSING_FAILED: 'Failed to process image. Please try again.',
     INTERNAL_ERROR: 'Internal server error. Please try again later.',
+    DEMO_UNAVAILABLE: 'Demo service temporarily unavailable',
+    ORIGIN_NOT_ALLOWED: 'Demo endpoint only accessible from the landing page',
+    UNSUPPORTED_OPERATION: 'Method not allowed for demo endpoint',
   }
   return messages[code]
 }
