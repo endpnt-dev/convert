@@ -37,7 +37,7 @@ function initializeRateLimiters() {
           '1 m'
         ),
         analytics: true,
-        prefix: 'rl:convert:free',
+        prefix: 'endpnt:ratelimit:convert:free',
       }),
       starter: new Ratelimit({
         redis: redisInstance,
@@ -46,7 +46,7 @@ function initializeRateLimiters() {
           '1 m'
         ),
         analytics: true,
-        prefix: 'rl:convert:starter',
+        prefix: 'endpnt:ratelimit:convert:starter',
       }),
       pro: new Ratelimit({
         redis: redisInstance,
@@ -55,7 +55,7 @@ function initializeRateLimiters() {
           '1 m'
         ),
         analytics: true,
-        prefix: 'rl:convert:pro',
+        prefix: 'endpnt:ratelimit:convert:pro',
       }),
       enterprise: new Ratelimit({
         redis: redisInstance,
@@ -64,7 +64,7 @@ function initializeRateLimiters() {
           '1 m'
         ),
         analytics: true,
-        prefix: 'rl:convert:enterprise',
+        prefix: 'endpnt:ratelimit:convert:enterprise',
       }),
     }
   }
@@ -83,7 +83,7 @@ function initializeDemoRateLimit() {
         `${DEMO_RATE_LIMIT.window_minutes} m`
       ),
       analytics: true,
-      prefix: 'rl:convert:demo',
+      prefix: 'endpnt:demo:convert:ratelimit',
     })
   }
   return demoRateLimit

@@ -150,8 +150,8 @@ Every other repo has one. Confirmed via `read_multiple_files` attempt — got `E
 
 **Recommended fix:** Add a `.gitignore` matching the pattern of sister repos (I'd recommend QR's version as the template — it's the most complete). This is HIGH priority — gitignore omission is how accidental secret leaks happen.
 
-### P2 — Rate-limit namespace correct (`rl:convert:{tier}`)
-No fix needed. Flagging for completeness.
+### P2 — Rate-limit namespace (updated Phase 8)
+Prefix renamed to `endpnt:ratelimit:convert:{tier}` / `endpnt:demo:convert:ratelimit` per platform standard. No further action needed.
 
 ### P3 — Inconsistent import style (default vs named)
 **File:** `lib/image.ts` imports `sharp` as default, `formidable` as default, but `fs` as named `{ promises as fs }`.

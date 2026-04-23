@@ -127,7 +127,7 @@ Currently thrown as `throw new Error('CODE_STRING')` and pattern-matched by the 
 
 ## Rate-Limit Namespace
 
-Convert uses `rl:convert:{tier}` as the Upstash key prefix. This is correct and matches peer APIs (QR, Preview, Screenshot-after-fix). Do NOT change.
+Convert uses `endpnt:ratelimit:convert:{tier}` as the Upstash key prefix for main auth, and `endpnt:demo:convert:ratelimit` for demo. These match the platform standard (standardized in Phase 8 of CC-SPEC-DEMO-PROXY-STANDARDIZATION.md). Do NOT change.
 
 ---
 
