@@ -1,3 +1,5 @@
+> **⚠️ Security note (2026-04-24):** This file previously contained a live API key literal (C-008). The key has been revoked and is no longer active. Curl examples use `YOUR_API_KEY` — substitute a key retrieved from Vercel env.
+
 # endpnt Image Conversion API — CC Spec (Part 4 of 6)
 **Version:** 1.0
 **Date:** April 13, 2026
@@ -271,7 +273,7 @@ Sharp with its libvips dependency adds ~20MB. Configure vercel.json:
 ```
 UPSTASH_REDIS_REST_URL=https://your-redis.upstash.io
 UPSTASH_REDIS_REST_TOKEN=your_token_here
-API_KEYS={"ek_live_74qlNSbK5jTwq28Y":{"tier":"free","name":"Demo Key"}}
+API_KEYS={"YOUR_API_KEY":{"tier":"free","name":"Demo Key"}}
 NEXT_PUBLIC_SITE_URL=https://convert.endpnt.dev
 ```
 

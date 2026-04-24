@@ -4,7 +4,7 @@
 
 **ID prefix:** `C-NNN` (sequential, do not reuse).
 
-**Last updated:** 2026-04-24 (biweekly audit: C-001, C-002, C-004, C-005 resolved; C-008 added).
+**Last updated:** 2026-04-24 (biweekly audit: C-001, C-002, C-004, C-005 resolved; C-008, C-009 added; C-008 resolved same day per CC-SPEC-ROTATE-C008-LEAKED-KEY.md).
 
 ---
 
@@ -51,20 +51,6 @@
 - **Fix approach:** Search `lib/image.ts` and route handlers for `console.log` calls (as distinct from `console.error`). Remove any that are debug-only. Keep `console.error` for genuine error paths if they exist.
 - **Status:** Open. Low priority — verify exact location and remove during next convert session.
 
-### C-008 — Live API key committed in `CC-FOLLOWUP-V1-MULTIPART-BUG.md`
-
-- **Severity:** High (security — key must be treated as compromised)
-- **File:** `CC-FOLLOWUP-V1-MULTIPART-BUG.md` line 33
-- **Discovered:** 2026-04-24 (biweekly code health audit)
-- **Symptom:** The string `ek_live_hoWnzx74NUf04esiG8pv` appears in a curl example inside `CC-FOLLOWUP-V1-MULTIPART-BUG.md`, which is committed to git history. Per platform CLAUDE.md API key hygiene rules, any key value that has ever been committed to git must be treated as compromised.
-- **Root cause:** The key was embedded in a debugging/followup doc without sanitizing it to a placeholder value first.
-- **Impact:** Any person with read access to the git repo can extract the key. Pre-launch this is lower risk (repo likely private), but the key should still be rotated before any public access.
-- **Fix approach:**
-  1. Rotate the compromised key via `./scripts/generate-api-key.sh` and update `API_KEYS` in Vercel for all affected projects.
-  2. Optionally redact the committed file (git history rewrite is complex and may not be worth the disruption — focus on rotation instead).
-  3. Add a note to the file header that the key shown is revoked.
-- **Status:** Open. High priority — rotate before launch.
-
 ---
 
 ## Resolved bugs
@@ -94,6 +80,14 @@
 - **Resolution commit:** Not tracked — import confirmed removed by audit 2026-04-24
 - **What changed:** `formidable` and `{ promises as fs }` imports removed from `lib/image.ts`. `lib/image.ts` line 1 is now `import sharp from 'sharp'` with no formidable reference.
 - **Verification:** Audit 2026-04-24 confirmed no formidable import present in current code.
+
+### C-008 — Live API key committed in `CC-FOLLOWUP-V1-MULTIPART-BUG.md`
+
+- **Originally:** High (security), discovered 2026-04-24
+- **Resolved:** 2026-04-24
+- **Resolution spec:** CC-SPEC-ROTATE-C008-LEAKED-KEY.md
+- **What changed:** Key A (`ek_live_hoW...iG8pv`) confirmed absent from production `API_KEYS` (curl with key value → 401 on live authenticated endpoints). Key A literal sanitized in: `CC-FOLLOWUP-V1-MULTIPART-BUG.md` (redacted to `YOUR_API_KEY`), `BUGS.md` (masked form retained for tracking), `color/docs/specs/archive/DONE-CC-SPEC-DEMO-PROXY-FIX.md`, and `qr/CODE-REVIEW-FINDINGS.md`. A second key (Key B, `ek_live_74q...28Y`) discovered during the same sweep and also confirmed absent from production — sanitized across 6 repos; tracked separately as P-006 (resolved).
+- **Verification:** `curl -X POST https://validate.endpnt.dev/api/v1/validate/email -H "x-api-key: <Key A>"` → 401. `curl -X POST https://color.endpnt.dev/api/v1/convert -H "x-api-key: <Key B>"` → 401. `git grep` across all 10 API repos confirms zero remaining key literals in repo-level files. Platform-root files (`CLAUDE.md`, `docs/`) retain masked forms or intentional historical records only.
 
 ### C-005 — Next 15 config syntax in `next.config.js`
 
