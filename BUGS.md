@@ -4,7 +4,7 @@
 
 **ID prefix:** `C-NNN` (sequential, do not reuse).
 
-**Last updated:** 2026-04-24 (biweekly audit: C-001, C-002, C-004, C-005 resolved; C-008, C-009 added; C-008 resolved same day per CC-SPEC-ROTATE-C008-LEAKED-KEY.md).
+**Last updated:** 2026-04-28 (C-009 resolved).
 
 ---
 
@@ -41,15 +41,6 @@
 - **Fix approach:** Introduce a typed error class (see `qr/lib/errors.ts` pattern). Each thrown error has a `.code` property and the route handler switches on it. TypeScript enforces consistency.
 - **Status:** Open. Bundle with C-006 (same spec).
 
-### C-009 — Debug `console.log` statements in production code
-
-- **Severity:** Low (logging hygiene — may leak internal state in Vercel logs)
-- **File:** `lib/image.ts` (exact line TBD — verify during fix)
-- **Discovered:** 2026-04-24 (biweekly code health audit)
-- **Symptom:** Debug `console.log` statements are present in production code paths, likely in `lib/image.ts` around the image processing pipeline. These were likely added during the SSRF fix work (commit `091517b`) or the multipart investigation and never removed.
-- **Impact:** Console.log output appears in Vercel function logs, potentially leaking internal state, URL values, or processing details. Verbose logs also add minor latency and cost to Vercel's log volume.
-- **Fix approach:** Search `lib/image.ts` and route handlers for `console.log` calls (as distinct from `console.error`). Remove any that are debug-only. Keep `console.error` for genuine error paths if they exist.
-- **Status:** Open. Low priority — verify exact location and remove during next convert session.
 
 ---
 
@@ -88,6 +79,16 @@
 - **Resolution spec:** CC-SPEC-ROTATE-C008-LEAKED-KEY.md
 - **What changed:** Key A (`ek_live_hoW...iG8pv`) confirmed absent from production `API_KEYS` (curl with key value → 401 on live authenticated endpoints). Key A literal sanitized in: `CC-FOLLOWUP-V1-MULTIPART-BUG.md` (redacted to `YOUR_API_KEY`), `BUGS.md` (masked form retained for tracking), `color/docs/specs/archive/DONE-CC-SPEC-DEMO-PROXY-FIX.md`, and `qr/CODE-REVIEW-FINDINGS.md`. A second key (Key B, `ek_live_74q...28Y`) discovered during the same sweep and also confirmed absent from production — sanitized across 6 repos; tracked separately as P-006 (resolved).
 - **Verification:** `curl -X POST https://validate.endpnt.dev/api/v1/validate/email -H "x-api-key: <Key A>"` → 401. `curl -X POST https://color.endpnt.dev/api/v1/convert -H "x-api-key: <Key B>"` → 401. `git grep` across all 10 API repos confirms zero remaining key literals in repo-level files. Platform-root files (`CLAUDE.md`, `docs/`) retain masked forms or intentional historical records only.
+
+### C-009 — Debug `console.log` statements in production code
+
+- **Originally:** Low (logging hygiene), discovered 2026-04-24 (biweekly audit)
+- **Resolved:** 2026-04-28
+- **Resolution commit:** *(to be filled after push)*
+- **Files fixed:** `app/api/v1/convert/route.ts` (lines 16-18), `lib/demo-proxy.ts` (lines 133-135)
+- **What changed:** Both debug blocks (each consisting of two `// DEBUG PHASE 5b: remove after smoke tests pass` sentinel comments and one `console.log` call) removed. Note: BUGS.md entry said file was `lib/image.ts` — actual locations were the convert route and demo-proxy. `lib/image.ts` had zero `console.log` calls.
+
+---
 
 ### C-005 — Next 15 config syntax in `next.config.js`
 

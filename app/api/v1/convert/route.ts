@@ -13,10 +13,6 @@ import {
 import { OutputFormat } from '@/lib/config'
 
 export async function POST(request: NextRequest) {
-  // DEBUG PHASE 5b: remove after smoke tests pass
-  console.log('[V1-CONVERT] Content-Type:', request.headers.get('content-type'))
-  // DEBUG PHASE 5b: remove after smoke tests pass
-
   const startTime = Date.now()
   const requestId = generateRequestId()
 
